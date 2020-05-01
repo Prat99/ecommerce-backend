@@ -1,19 +1,31 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const mongoose = require('moongoose');
-require('dotenv').config();
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const morgan = require("morgan");
+const mongoose = require("mongoose");
+require("dotenv").config();
 
-const routes = require('./routes/routes');
+// middlewares
+app.use(morgan("dev"));
+app.use(bodyParser.json());
+app.use(cookieParser());
 
-mongoose.connect(process.env.DATABASE, {useNewUrlParser: true, useUnifiedTopology: true})
-        .then(() => console.log('db connected'));
+const routes = require("./routes/routes");
 
-
+mongoose
+  .connect(process.env.DATABASE, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("db connected"));
 
 // use routes as middleware all the traffice will direct through it.
-app.use('/api', routes);
+app.use("/api/v1", routes);
 
+// assign the server port
+const port = process.env.PORT || 8000;
 
-app.listen(3000, () => {
-    console.log('server is running at 3000');
-})
+app.listen(port, () => {
+  console.log(`Server is running on ${port}`);
+});
